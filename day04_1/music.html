@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>音乐</title>
+	<script src="lib/angular.min.js"></script>
+	<script src="lib/angular-route.js"></script>
+</head>
+<body ng-app="app">
+	<div>
+		<a href="#1">流行</a>
+		<a href="#2">华语</a>
+		<a href="#3">欧美</a>
+		<a href="#4">日韩</a>
+	</div>
+	<div ng-view></div>
+</body>
+<script>
+	//创建app应用，同时依赖ngRoute路由
+	var app = angular.module("app",["ngRoute"]);
+	//创建控制器,$http用于发送请求,$routeParams用于获取请求参数
+	app.controller("myCtrl",["$scope","$http","$routeParams",function($scope,$http,$routeParams){
+		//获取请求参数
+		var id = $routeParams.id;
+		console.log(id);
+		$http({
+			url:"./music.php",
+			method:"get",
+			params:{number:id}//传递id的值
+		}).success(function(result){
+			//绑定数据
+			$scope.music = result;
+		})
+	}]);
+	//配置路由
+	app.config(["$routeProvider",function($routeProvider){
+		//设置路由参数(路由调用时传入参数id)
+		$routeProvider.when("/:id",{
+			//设置视图
+			templateUrl:"./show.html",
+			//设置视图控制器,用于向视图传递数据
+			controller:"myCtrl"
+		})
+	}]);
+</script>
+</html>
